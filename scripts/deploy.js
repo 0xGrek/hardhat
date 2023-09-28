@@ -1,10 +1,12 @@
 // imports
 require("@nomicfoundation/hardhat-toolbox")
+require("dotenv").config()
 
-const { ethers, run, network } = require("hardhat")
+const { run, ethers, network } = require("hardhat")
 
 // async main
-// npx hardhat run scripts/deploy.js --network   hardhat           sepolia
+// npx hardhat run scripts/deploy.js --network sepolia
+// npx hardhat run scripts/deploy.js --network hardhat
 async function main() {
     const SimpleStorageFactory = await ethers.getContractFactory(
         "SimpleStorage"
@@ -13,17 +15,20 @@ async function main() {
     console.log("deploing contract...")
     await simpleStorage.waitForDeployment()
     console.log(`Deployed contract to: ${simpleStorage.target}`)
+
     // Check RPC
     if (network.config.chainId === 11155111 && process.env.ETHERSCAN_API_KEY) {
-        await simpleStorage.waitForDeployment(2)
-        await verify(simpleStorage.address, [])
+        console.log("Waiting for block txes---------------")
+        await simpleStorage.waitForDeployment(6)
+        await verify(simpleStorage.target, [])
     }
-    const currentValue = await simpleStorage.retrieve()
-    console.log(`Curren Value is: ${currentValue}`)
 
+    const currentValue = await simpleStorage.retrieve()
+    console.log(`Current value is: ${currentValue}`)
     // Update the current Value
     const txTesponse = await simpleStorage.store(7)
-    await txTesponse.wait(1)
+    await txTesponse.wait(5)
+
     const updatedValue = await simpleStorage.retrieve()
     console.log(`Update Value is : ${updatedValue}`)
 }
