@@ -9,6 +9,7 @@ const { run, ethers, network } = require("hardhat")
 // npx hardhat run scripts/deploy.js --network sepolia
 // npx hardhat run scripts/deploy.js --network hardhat
 // npx hardhat run scripts/deploy.js --network localhost
+// npx hardhat console --network localhost
 async function main() {
     const SimpleStorageFactory = await ethers.getContractFactory(
         "SimpleStorage"
